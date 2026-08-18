@@ -46,6 +46,11 @@ MedicalProductModel.init({
         type: sequelize_1.DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
+    quantity: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
     status: {
         type: sequelize_1.DataTypes.BOOLEAN,
         allowNull: false,

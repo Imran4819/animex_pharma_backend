@@ -7,6 +7,7 @@ declare class MedicalProductModel extends Model {
     unit: "Ltr" | "ml" | "Kg" | "gm" | "Piece" | "Box" | "Bottle" | "Strip" | "Tablet";
     mrp: number;
     selling_price: number;
+    quantity: number;
     status: boolean;
     readonly created_at: Date;
     readonly updated_at: Date;

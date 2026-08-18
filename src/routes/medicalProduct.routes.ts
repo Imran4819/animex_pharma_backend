@@ -13,5 +13,6 @@ export default async function medicalProductRoutes(fastify: FastifyInstance) {
   fastify.get("/client/:client_id/medical-products", medicalProductController.getAllProducts);
   fastify.get("/client/:client_id/medical-products/:id", medicalProductController.getProductById);
   fastify.put("/client/:client_id/medical-products/:id", medicalProductController.updateProduct);
+  fastify.patch("/client/:client_id/medical-products/:id/quantity", medicalProductController.updateProductQuantityRaw);
   fastify.delete("/client/:client_id/medical-products/:id", medicalProductController.deleteProduct);
 }

@@ -15,6 +15,7 @@ async function medicalProductRoutes(fastify) {
     fastify.get("/client/:client_id/medical-products", medical_product_controller_1.default.getAllProducts);
     fastify.get("/client/:client_id/medical-products/:id", medical_product_controller_1.default.getProductById);
     fastify.put("/client/:client_id/medical-products/:id", medical_product_controller_1.default.updateProduct);
+    fastify.patch("/client/:client_id/medical-products/:id/quantity", medical_product_controller_1.default.updateProductQuantityRaw);
     fastify.delete("/client/:client_id/medical-products/:id", medical_product_controller_1.default.deleteProduct);
 }
 //# sourceMappingURL=medicalProduct.routes.js.map

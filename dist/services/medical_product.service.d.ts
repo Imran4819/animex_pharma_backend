@@ -4,6 +4,7 @@ declare class MedicalProductService {
     getAllProducts(query: any): Promise<MedicalProductModel[]>;
     getProductById(id: string, clientId?: string): Promise<MedicalProductModel | null>;
     updateProduct(id: string, data: any): Promise<MedicalProductModel | null>;
+    updateProductQuantityRaw(id: string, quantity: number, clientId?: string): Promise<MedicalProductModel | null>;
     deleteProduct(id: string, clientId?: string): Promise<boolean>;
 }
 declare const _default: MedicalProductService;

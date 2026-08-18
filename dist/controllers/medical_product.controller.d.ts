@@ -5,6 +5,7 @@ declare class MedicalProductController {
     getProductById(request: FastifyRequest, reply: FastifyReply): Promise<never>;
     updateProduct(request: FastifyRequest, reply: FastifyReply): Promise<never>;
     deleteProduct(request: FastifyRequest, reply: FastifyReply): Promise<never>;
+    updateProductQuantityRaw(request: FastifyRequest, reply: FastifyReply): Promise<never>;
 }
 declare const _default: MedicalProductController;
 export default _default;

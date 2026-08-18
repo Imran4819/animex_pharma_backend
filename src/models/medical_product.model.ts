@@ -10,6 +10,7 @@ class MedicalProductModel extends Model {
     public unit!: "Ltr" | "ml" | "Kg" | "gm" | "Piece" | "Box" | "Bottle" | "Strip" | "Tablet";
     public mrp!: number;
     public selling_price!: number;
+    public quantity!: number;
     public status!: boolean;
     public readonly created_at!: Date;
     public readonly updated_at!: Date;
@@ -64,6 +65,11 @@ MedicalProductModel.init(
         selling_price: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
+        },
+        quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
         },
         status: {
             type: DataTypes.BOOLEAN,

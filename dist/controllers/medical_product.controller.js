@@ -128,6 +128,38 @@ class MedicalProductController {
             });
         }
     }
+    // UPDATE QUANTITY VIA RAW SQL (As requested)
+    async updateProductQuantityRaw(request, reply) {
+        try {
+            const { id, client_id } = request.params;
+            const { quantity } = request.body;
+            if (quantity === undefined || isNaN(quantity)) {
+                return reply.code(400).send({
+                    success: false,
+                    message: "Invalid quantity parameter",
+                });
+            }
+            const product = await medical_product_service_1.default.updateProductQuantityRaw(id, quantity, client_id);
+            if (!product) {
+                return reply.code(404).send({
+                    success: false,
+                    message: "Medical product not found for quantity update",
+                });
+            }
+            return reply.send({
+                success: true,
+                message: "Product quantity updated successfully via SQL",
+                data: product,
+            });
+        }
+        catch (error) {
+            return reply.code(500).send({
+                success: false,
+                message: "Error updating quantity",
+                error,
+            });
+        }
+    }
 }
 exports.default = new MedicalProductController();
 //# sourceMappingURL=medical_product.controller.js.map

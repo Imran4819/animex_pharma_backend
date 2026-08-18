@@ -1,6 +1,7 @@
 import MedicalProductModel from "../models/medical_product.model";
 import ProductCategoryModel from "../models/product_category.model";
-import { Op } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
+import sequelize from "../config/db";
 
 class MedicalProductService {
 
@@ -13,6 +14,7 @@ class MedicalProductService {
             unit: data.unit,
             mrp: data.mrp,
             selling_price: data.selling_price,
+            quantity: data.quantity !== undefined ? Number(data.quantity) : 0,
             status: data.status !== undefined ? (data.status === "true" || data.status === true) : true,
         });
 
@@ -85,6 +87,7 @@ class MedicalProductService {
         if (data.unit !== undefined) updateData.unit = data.unit;
         if (data.mrp !== undefined) updateData.mrp = data.mrp;
         if (data.selling_price !== undefined) updateData.selling_price = data.selling_price;
+        if (data.quantity !== undefined) updateData.quantity = Number(data.quantity);
         if (data.status !== undefined) {
             updateData.status = data.status === "true" || data.status === true;
         }
@@ -94,6 +97,30 @@ class MedicalProductService {
         });
 
         return await this.getProductById(id, data.client_id);
+    }
+
+    // UPDATE QUANTITY VIA RAW SQL QUERY (As requested)
+    async updateProductQuantityRaw(id: string, quantity: number, clientId?: string) {
+        const query = clientId
+            ? `UPDATE medical_products SET quantity = :quantity, updated_at = NOW() WHERE id = :id AND client_id = :clientId`
+            : `UPDATE medical_products SET quantity = :quantity, updated_at = NOW() WHERE id = :id`;
+
+        await sequelize.query(query, {
+            replacements: { id, quantity: Number(quantity), clientId },
+            type: QueryTypes.UPDATE
+        });
+
+        // Also update the products table for redundancy/compatibility
+        const productsQuery = clientId
+            ? `UPDATE products SET quantity = :quantity, updated_at = NOW() WHERE id = :id AND client_id = :clientId`
+            : `UPDATE products SET quantity = :quantity, updated_at = NOW() WHERE id = :id`;
+
+        await sequelize.query(productsQuery, {
+            replacements: { id, quantity: Number(quantity), clientId },
+            type: QueryTypes.UPDATE
+        });
+
+        return await this.getProductById(id, clientId);
     }
 
     // DELETE
