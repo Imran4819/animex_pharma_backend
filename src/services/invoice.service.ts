@@ -1,6 +1,7 @@
 import InvoiceModel from "../models/invoice.model";
 import MedicalStoreModel from "../models/medical_store.model";
 import ClientModel from "../models/client.model";
+import MedicalProductModel from "../models/medical_product.model";
 import { Op } from "sequelize";
 import puppeteer from "puppeteer";
 
@@ -116,6 +117,23 @@ class InvoiceService {
             status,
             notes: data.notes || null
         });
+
+        // Reduce product stock in database
+        for (const item of items) {
+            const qty = Number(item.quantity || 0);
+            if (qty > 0 && item.product_title) {
+                const product = await MedicalProductModel.findOne({
+                    where: {
+                        client_id: data.client_id,
+                        product_title: item.product_title
+                    }
+                });
+                if (product) {
+                    const newQty = Math.max(0, product.quantity - qty);
+                    await product.update({ quantity: newQty });
+                }
+            }
+        }
 
         return await this.getInvoiceById(invoice.id, data.client_id);
     }

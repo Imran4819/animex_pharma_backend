@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const invoice_model_1 = __importDefault(require("../models/invoice.model"));
 const medical_store_model_1 = __importDefault(require("../models/medical_store.model"));
 const client_model_1 = __importDefault(require("../models/client.model"));
+const medical_product_model_1 = __importDefault(require("../models/medical_product.model"));
 const sequelize_1 = require("sequelize");
 const puppeteer_1 = __importDefault(require("puppeteer"));
 let cachedBrowser = null;
@@ -115,6 +116,22 @@ class InvoiceService {
             status,
             notes: data.notes || null
         });
+        // Reduce product stock in database
+        for (const item of items) {
+            const qty = Number(item.quantity || 0);
+            if (qty > 0 && item.product_title) {
+                const product = await medical_product_model_1.default.findOne({
+                    where: {
+                        client_id: data.client_id,
+                        product_title: item.product_title
+                    }
+                });
+                if (product) {
+                    const newQty = Math.max(0, product.quantity - qty);
+                    await product.update({ quantity: newQty });
+                }
+            }
+        }
         return await this.getInvoiceById(invoice.id, data.client_id);
     }
     // GET ALL INVOICES
