@@ -44,6 +44,10 @@ exports.app.register(productCategory_routes_1.default, { prefix: "/product-categ
 exports.app.register(medicalProduct_routes_1.default, { prefix: "/medical-product" });
 exports.app.register(medicalStore_routes_1.default, { prefix: "/medical-store" });
 exports.app.register(invoice_routes_1.default);
+// ─── Health Check Route ───────────────────────────────────────────────────────
+exports.app.get("/health", async (request, reply) => {
+    return reply.send({ message: "system is healthy" });
+});
 // ─── Server start ─────────────────────────────────────────────────────────────
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const HOST = process.env.HOST || "0.0.0.0";

@@ -45,6 +45,11 @@ app.register(medicalProductRoutes,  { prefix: "/medical-product" });
 app.register(medicalStoreRoutes,    { prefix: "/medical-store" });
 app.register(invoiceRoutes);
 
+// ─── Health Check Route ───────────────────────────────────────────────────────
+app.get("/health", async (request, reply) => {
+  return reply.send({ message: "system is healthy" });
+});
+
 // ─── Server start ─────────────────────────────────────────────────────────────
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const HOST = process.env.HOST || "0.0.0.0";
