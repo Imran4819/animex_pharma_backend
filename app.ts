@@ -1,18 +1,20 @@
 import Fastify from "fastify";
 import dotenv from "dotenv";
 import fastifyCors from "@fastify/cors";
-import authRoutes from "./src/routes/auth.route";
-import sequelize from "./src/config/db"; 
-import clientRoutes from "./src/routes/client.route";
-import productCategoryRoutes from "./src/routes/product_category.route";
-import medicalProductRoutes from "./src/routes/medical_product.routes";
-import medicalStoreRoutes from "./src/routes/medical_store.route";
-import userRoutes from "./src/routes/user.route";
+
+import sequelize from "./src/config/db";
+import authRoutes from "./src/routes/auth.routes";
+import clientRoutes from "./src/routes/client.routes";
+import userRoutes from "./src/routes/user.routes";
+import productCategoryRoutes from "./src/routes/productCategory.routes";
+import medicalProductRoutes from "./src/routes/medicalProduct.routes";
+import medicalStoreRoutes from "./src/routes/medicalStore.routes";
 
 dotenv.config();
 
 export const app = Fastify({ logger: true });
 
+// ─── JSON body parser ─────────────────────────────────────────────────────────
 app.addContentTypeParser("application/json", { parseAs: "string" }, (req, body: string, done) => {
   if (!body || body.trim() === "") {
     done(null, null);
@@ -27,19 +29,21 @@ app.addContentTypeParser("application/json", { parseAs: "string" }, (req, body: 
   }
 });
 
+// ─── CORS ─────────────────────────────────────────────────────────────────────
 app.register(fastifyCors, {
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 });
 
-// routes register
-app.register(authRoutes, { prefix: "/auth" });
-app.register(clientRoutes, { prefix: "/client" });
-app.register(userRoutes, { prefix: "/user" });
+// ─── Routes (one file per controller) ────────────────────────────────────────
+app.register(authRoutes,            { prefix: "/auth" });
+app.register(clientRoutes,          { prefix: "/client" });
+app.register(userRoutes,            { prefix: "/user" });
 app.register(productCategoryRoutes, { prefix: "/product-category" });
-app.register(medicalProductRoutes, { prefix: "/medical-product" });
-app.register(medicalStoreRoutes, { prefix: "/medical-store" });
+app.register(medicalProductRoutes,  { prefix: "/medical-product" });
+app.register(medicalStoreRoutes,    { prefix: "/medical-store" });
 
+// ─── Server start ─────────────────────────────────────────────────────────────
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const HOST = process.env.HOST || "0.0.0.0";
 
@@ -58,3 +62,4 @@ const startServer = async () => {
 if (require.main === module) {
   startServer();
 }
+

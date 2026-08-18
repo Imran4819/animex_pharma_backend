@@ -24,7 +24,8 @@ export class AuthService {
       {
         id: client.id,
         name: client.name,
-        email: client.email ?? ""
+        email: client.email ?? "",
+        role: "businessowner"   // default role for newly signed-up clients
       },
       process.env.JWT_SECRET || "default_secret",
       { expiresIn: "1d" }
@@ -66,7 +67,8 @@ export class AuthService {
       {
         id: user.id,
         name: user.name,
-        email: user.email ?? ""
+        email: user.email ?? "",
+        role: user.role           // ← include role so roleMiddleware works
       },
       process.env.JWT_SECRET || "default_secret",
       { expiresIn: "1d" }

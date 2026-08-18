@@ -25,7 +25,8 @@ class AuthService {
         const token = jsonwebtoken_1.default.sign({
             id: client.id,
             name: client.name,
-            email: client.email ?? ""
+            email: client.email ?? "",
+            role: "businessowner" // default role for newly signed-up clients
         }, process.env.JWT_SECRET || "default_secret", { expiresIn: "1d" });
         return {
             message: "Client registered successfully",
@@ -57,7 +58,8 @@ class AuthService {
         const token = jsonwebtoken_1.default.sign({
             id: user.id,
             name: user.name,
-            email: user.email ?? ""
+            email: user.email ?? "",
+            role: user.role // ← include role so roleMiddleware works
         }, process.env.JWT_SECRET || "default_secret", { expiresIn: "1d" });
         return {
             message: "Login successful",
