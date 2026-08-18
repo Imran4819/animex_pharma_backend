@@ -1,3 +1,4 @@
+import UserModel from "../models/user.model";
 import ClientModel from "../models/client.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -23,7 +24,7 @@ export class AuthService {
       {
         id: client.id,
         name: client.name,
-        email: client.email
+        email: client.email ?? ""
       },
       process.env.JWT_SECRET || "default_secret",
       { expiresIn: "1d" }
@@ -37,23 +38,35 @@ export class AuthService {
   }
 
   async login(data: any) {
-    const { email, phone } = data;
+    const { email, phone, password } = data;
+
+    if (!password) {
+      throw new Error("Password is required");
+    }
 
     const whereCondition: any = {};
     if (email) whereCondition.email = email;
     if (phone) whereCondition.phone = phone;
 
-    const client = await ClientModel.findOne({ where: whereCondition });
+    const user = await UserModel.findOne({ where: whereCondition });
 
-    if (!client) {
-      throw new Error("Client not found");
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (!user.password) {
+      throw new Error("Invalid credentials");
+    }
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches) {
+      throw new Error("Invalid credentials");
     }
 
     const token = jwt.sign(
       {
-        id: client.id,
-        name: client.name,
-        email: client.email
+        id: user.id,
+        name: user.name,
+        email: user.email ?? ""
       },
       process.env.JWT_SECRET || "default_secret",
       { expiresIn: "1d" }
@@ -62,7 +75,7 @@ export class AuthService {
     return {
       message: "Login successful",
       token,
-      client
+      user
     };
   }
 }
