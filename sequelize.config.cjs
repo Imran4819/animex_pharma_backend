@@ -9,7 +9,13 @@ const common = {
   dialect: process.env.DB_DIALECT || 'postgres',
   logging: false,
   migrationStorageTableName: 'sequelize_meta',
-  seederStorageTableName: 'sequelize_seed_meta'
+  seederStorageTableName: 'sequelize_seed_meta',
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
 };
 
 module.exports = {

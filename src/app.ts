@@ -9,6 +9,7 @@ import userRoutes from "./routes/user.routes";
 import productCategoryRoutes from "./routes/productCategory.routes";
 import medicalProductRoutes from "./routes/medicalProduct.routes";
 import medicalStoreRoutes from "./routes/medicalStore.routes";
+import invoiceRoutes from "./routes/invoice.routes";
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.register(userRoutes,            { prefix: "/user" });
 app.register(productCategoryRoutes, { prefix: "/product-category" });
 app.register(medicalProductRoutes,  { prefix: "/medical-product" });
 app.register(medicalStoreRoutes,    { prefix: "/medical-store" });
+app.register(invoiceRoutes);
 
 // ─── Server start ─────────────────────────────────────────────────────────────
 const PORT = parseInt(process.env.PORT || "3000", 10);

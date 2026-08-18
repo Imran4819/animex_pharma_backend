@@ -14,6 +14,7 @@ const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const productCategory_routes_1 = __importDefault(require("./routes/productCategory.routes"));
 const medicalProduct_routes_1 = __importDefault(require("./routes/medicalProduct.routes"));
 const medicalStore_routes_1 = __importDefault(require("./routes/medicalStore.routes"));
+const invoice_routes_1 = __importDefault(require("./routes/invoice.routes"));
 dotenv_1.default.config();
 exports.app = (0, fastify_1.default)({ logger: true });
 // ─── JSON body parser ─────────────────────────────────────────────────────────
@@ -42,6 +43,7 @@ exports.app.register(user_routes_1.default, { prefix: "/user" });
 exports.app.register(productCategory_routes_1.default, { prefix: "/product-category" });
 exports.app.register(medicalProduct_routes_1.default, { prefix: "/medical-product" });
 exports.app.register(medicalStore_routes_1.default, { prefix: "/medical-store" });
+exports.app.register(invoice_routes_1.default);
 // ─── Server start ─────────────────────────────────────────────────────────────
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const HOST = process.env.HOST || "0.0.0.0";
