@@ -8,6 +8,8 @@ class InvoiceModel extends Model {
     public client_id!: string;
     public medical_store_id!: string;
     public invoice_number!: string;
+    public company_invoice_number!: number | null;
+    public global_bill_id!: number | null;
     public date!: Date;
     public items!: any; // JSON array of items
     public subtotal!: number;
@@ -53,6 +55,15 @@ InvoiceModel.init(
         invoice_number: {
             type: DataTypes.STRING(50),
             allowNull: false,
+        },
+        company_invoice_number: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        global_bill_id: {
+            type: DataTypes.BIGINT,
+            allowNull: true,
+            unique: true,
         },
         date: {
             type: DataTypes.DATE,
