@@ -35,6 +35,15 @@ InvoiceModel.init({
         type: sequelize_1.DataTypes.STRING(50),
         allowNull: false,
     },
+    company_invoice_number: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: true,
+    },
+    global_bill_id: {
+        type: sequelize_1.DataTypes.BIGINT,
+        allowNull: true,
+        unique: true,
+    },
     date: {
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,

@@ -4,6 +4,8 @@ declare class InvoiceModel extends Model {
     client_id: string;
     medical_store_id: string;
     invoice_number: string;
+    company_invoice_number: number | null;
+    global_bill_id: number | null;
     date: Date;
     items: any;
     subtotal: number;

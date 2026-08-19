@@ -43,14 +43,14 @@ async function getSharedBrowser() {
 class InvoiceService {
     // CREATE INVOICE
     async createInvoice(data: any) {
-        // Auto-increment invoice number for this client if not provided
-        let invoiceNumber = data.invoice_number;
-        if (!invoiceNumber) {
-            const count = await InvoiceModel.count({
-                where: { client_id: data.client_id }
-            });
-            invoiceNumber = `#${count + 1}`;
-        }
+        // Store the company-wise sequence once; the global id is independent.
+        const maxCompanyInvoiceNumber: any = await InvoiceModel.max("company_invoice_number", {
+            where: { medical_store_id: data.medical_store_id }
+        });
+        const companyInvoiceNumber = data.company_invoice_number || (Number(maxCompanyInvoiceNumber) || 0) + 1;
+        const maxGlobalBillId: any = await InvoiceModel.max("global_bill_id");
+        const globalBillId = data.global_bill_id || (Number(maxGlobalBillId) || 0) + 1;
+        const invoiceNumber = data.invoice_number || `#${companyInvoiceNumber}`;
 
         // Calculate totals
         const items = Array.isArray(data.items) ? data.items : [];
@@ -102,6 +102,8 @@ class InvoiceService {
             client_id: data.client_id,
             medical_store_id: data.medical_store_id,
             invoice_number: invoiceNumber,
+            company_invoice_number: companyInvoiceNumber,
+            global_bill_id: globalBillId,
             date: data.date || new Date(),
             items,
             subtotal: Number(subtotal.toFixed(2)),
@@ -349,6 +351,9 @@ class InvoiceService {
 
         const invoiceAmountInWords = this.numberToWords(invoice.grand_total);
         const uppercaseStatus = (invoice.status || "Pending").toUpperCase();
+        const displayInvoiceNumber = invoice.company_invoice_number
+          ? `#${invoice.company_invoice_number}`
+          : (invoice.invoice_number || "");
         
         // Status styling matching status colors
         let statusColor = "#a3660b";
@@ -748,7 +753,7 @@ class InvoiceService {
     </div>
     <div class="details-box">
       <div class="box-title">Invoice Specifications</div>
-      <div class="line">Invoice No: <strong>${invoice.invoice_number}</strong></div>
+      <div class="line">Invoice No: <strong>${displayInvoiceNumber}</strong></div>
       <div class="line">Date: ${dateStr}</div>
       <span class="status-pill">STATUS: ${uppercaseStatus} / ${invoice.payment_type}</span>
     </div>

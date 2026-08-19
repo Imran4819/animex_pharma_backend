@@ -153,9 +153,10 @@ class InvoiceController {
 
             const pdfBuffer = await invoiceService.generateInvoicePdf(invoice);
 
+            const pdfInvoiceNumber = invoice.company_invoice_number || invoice.invoice_number;
             return reply
                 .header("Content-Type", "application/pdf")
-                .header("Content-Disposition", `attachment; filename=invoice_${invoice.invoice_number}.pdf`)
+                .header("Content-Disposition", `attachment; filename=invoice_${pdfInvoiceNumber}.pdf`)
                 .send(pdfBuffer);
         } catch (error: any) {
             return reply.code(500).send({
