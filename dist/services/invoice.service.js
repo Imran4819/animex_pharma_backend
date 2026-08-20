@@ -9,7 +9,34 @@ const client_model_1 = __importDefault(require("../models/client.model"));
 const medical_product_model_1 = __importDefault(require("../models/medical_product.model"));
 const sequelize_1 = require("sequelize");
 const puppeteer_1 = __importDefault(require("puppeteer"));
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 let cachedBrowser = null;
+let cachedLogoBase64 = null;
+function getLogoBase64() {
+    if (cachedLogoBase64 !== null) {
+        return cachedLogoBase64;
+    }
+    const possiblePaths = [
+        path_1.default.join(process.cwd(), "src", "image (3).png"),
+        path_1.default.join(process.cwd(), "dist", "image (3).png"),
+        path_1.default.join(__dirname, "..", "image (3).png"),
+        path_1.default.join(__dirname, "..", "..", "src", "image (3).png"),
+    ];
+    for (const p of possiblePaths) {
+        try {
+            if (fs_1.default.existsSync(p)) {
+                cachedLogoBase64 = fs_1.default.readFileSync(p).toString("base64");
+                return cachedLogoBase64;
+            }
+        }
+        catch (_) {
+            // Ignore
+        }
+    }
+    cachedLogoBase64 = "";
+    return cachedLogoBase64;
+}
 async function getSharedBrowser() {
     if (cachedBrowser) {
         try {
@@ -282,6 +309,7 @@ class InvoiceService {
     renderInvoiceHtml(invoice) {
         const store = invoice.medical_store || {};
         const client = invoice.client || {};
+        const logoBase64 = getLogoBase64();
         // Company Details
         const companyName = client.name || "ANIMEX ANIMAL HEALTH CARE PVT LTD";
         const companyAddress = client.address
@@ -435,6 +463,13 @@ class InvoiceService {
     color:#fff;
     font-weight:800;
     font-size: 22px;
+    flex-shrink:0;
+  }
+
+  .logo-img{
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
     flex-shrink:0;
   }
 
@@ -699,7 +734,9 @@ class InvoiceService {
   <hr class="divider">
 
   <div class="company-block">
-    <div class="logo">${firstLetter}</div>
+    ${logoBase64
+            ? `<img src="data:image/png;base64,${logoBase64}" class="logo-img" alt="Logo" />`
+            : `<div class="logo">${firstLetter}</div>`}
     <div class="company-info">
       <div class="cname">${companyName}</div>
       <div class="caddr">${companyAddress}</div>
