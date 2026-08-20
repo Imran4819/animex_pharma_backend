@@ -140,9 +140,10 @@ class InvoiceController {
                 });
             }
             const pdfBuffer = await invoice_service_1.default.generateInvoicePdf(invoice);
+            const pdfInvoiceNumber = invoice.company_invoice_number || invoice.invoice_number;
             return reply
                 .header("Content-Type", "application/pdf")
-                .header("Content-Disposition", `attachment; filename=invoice_${invoice.invoice_number}.pdf`)
+                .header("Content-Disposition", `attachment; filename=invoice_${pdfInvoiceNumber}.pdf`)
                 .send(pdfBuffer);
         }
         catch (error) {
