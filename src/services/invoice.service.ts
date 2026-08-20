@@ -4,8 +4,38 @@ import ClientModel from "../models/client.model";
 import MedicalProductModel from "../models/medical_product.model";
 import { Op } from "sequelize";
 import puppeteer from "puppeteer";
+import fs from "fs";
+import path from "path";
 
 let cachedBrowser: any = null;
+let cachedLogoBase64: string | null = null;
+
+function getLogoBase64(): string {
+    if (cachedLogoBase64 !== null) {
+        return cachedLogoBase64;
+    }
+    
+    const possiblePaths = [
+        path.join(process.cwd(), "src", "image (3).png"),
+        path.join(process.cwd(), "dist", "image (3).png"),
+        path.join(__dirname, "..", "image (3).png"),
+        path.join(__dirname, "..", "..", "src", "image (3).png"),
+    ];
+
+    for (const p of possiblePaths) {
+        try {
+            if (fs.existsSync(p)) {
+                cachedLogoBase64 = fs.readFileSync(p).toString("base64");
+                return cachedLogoBase64;
+            }
+        } catch (_) {
+            // Ignore
+        }
+    }
+    
+    cachedLogoBase64 = "";
+    return cachedLogoBase64;
+}
 
 async function getSharedBrowser() {
     if (cachedBrowser) {
@@ -308,6 +338,7 @@ class InvoiceService {
     renderInvoiceHtml(invoice: any): string {
         const store = invoice.medical_store || {};
         const client = invoice.client || {};
+        const logoBase64 = getLogoBase64();
 
         // Company Details
         const companyName = client.name || "ANIMEX ANIMAL HEALTH CARE PVT LTD";
@@ -466,6 +497,13 @@ class InvoiceService {
     color:#fff;
     font-weight:800;
     font-size: 22px;
+    flex-shrink:0;
+  }
+
+  .logo-img{
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
     flex-shrink:0;
   }
 
@@ -730,7 +768,10 @@ class InvoiceService {
   <hr class="divider">
 
   <div class="company-block">
-    <div class="logo">${firstLetter}</div>
+    ${logoBase64 
+      ? `<img src="data:image/png;base64,${logoBase64}" class="logo-img" alt="Logo" />` 
+      : `<div class="logo">${firstLetter}</div>`
+    }
     <div class="company-info">
       <div class="cname">${companyName}</div>
       <div class="caddr">${companyAddress}</div>
